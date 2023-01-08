@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <title>Mortgage Calculator</title>
+    <link rel="stylesheet" href="./public/css/style.css"/>
+    <script type="module" src="./public/frontJs/bank.js"></script>
+    <script type="module" src="./public/frontJs/banksStorage.js"></script>
+    <script type="module" src="./public/frontJs/bankList.js"></script>
+  </head>
+  <body>
+    <h1>Bank List</h1>
+    <h2>Don't see your bank? Add it!</h2>
+    <a href="mortgageCalculator" class="button">Calculate Mortgage!</a>
+    <div id="bank-managing">
+      <img id="add-bank" title="Add new bank" src="https://img.icons8.com/material-rounded/20/000000/plus-math--v1.png"/>
+      <div id="banks-column-holder">
+        <!--column names-->
+        <div class="bank">
+          <div>Bank Name</div>
+          <div>Interest Rate (%)</div>
+          <div>Maximum Loan ($) </div>
+          <div>Minimum down payment (%)</div>
+          <div>Loan Term (month) </div>
+          <div class="funcs-button-holder"></div>
+        </div>
+        <!--banks-->
+        <div id="banks"></div>
+      </div>
+    </div>
+  </body>
+</html>

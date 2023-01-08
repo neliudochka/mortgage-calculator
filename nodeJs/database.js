@@ -16,9 +16,6 @@ class Database {
 
   execQueryPromise(query) {
     return new Promise((resolve, reject) => {
-
-      console.log("execQueryPromise "+this.con.state)
-      //тут випадає помилка
       this.con.query(query, (err, script) => {
         console.log("1 "+err+ " " + this.con.state)
         if (err) reject(err);
@@ -28,7 +25,6 @@ class Database {
   }
 
   async checkSchema() {
-    console.log("i try")
     const schema = `
     CREATE TABLE IF NOT EXISTS bank (
       bank_id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -39,7 +35,7 @@ class Database {
       bank_loanTerm int unsigned
     )
     `;
-    const con = await this.createConnection();
+    await this.createConnection();
     this.execQueryPromise(schema)
     .catch(err => console.error(err));
   }

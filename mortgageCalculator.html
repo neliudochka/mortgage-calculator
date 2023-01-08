@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <title>Mortgage Calculator</title>
+    <link rel="stylesheet" href="./public/css/style.css"/>
+    <script type="module" src="./public/frontJs/banksStorage.js"></script>
+    <script type="module" src="./public/frontJs/mortgageCalculatorClass.js"></script>
+    <script type="module" src="./public/frontJs/mortgageCalculator.js"></script>
+  </head>
+  <body>
+    <h1>Welcome to the best mortgage calculator!</h1>
+    <h2>Calculate your mortgage now!</h2>
+    <h3>Don't see your bank?</h3>
+    <a href="bankList" class="button">Add it!</a>
+    <div id="calculator-options">
+      <div>
+        <label for="initial-loan">Your initial loan:</label>
+        <input type="number" name="initial-loan" id="initial-loan" min="0">
+      </div>
+      <div>
+        <label for="down-payment">Down payment:</label>
+        <input type="number"  name="down-payment" id="down-payment" min="0">
+      </div>
+      <div>
+        <label for="select-bank">Select bank:</label>
+        <select id="banks-dropdown" name="select-bank"></select>
+      </div>
+      <div id="calculate-button" class="button">Calculate</div>
+      <div id="warning"></div>
+      <div id="calculated-mortgage">Mortgage: <span id="mortgage-number"></span></div>
+    </div>
+  </body>
+</html>

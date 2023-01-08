@@ -1,0 +1,150 @@
+body {
+  background-color: #2c3e50;
+}
+
+h2, h1, h3 {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  color: aliceblue;
+  text-align: center;
+}
+
+#add-bank {
+  background-color: azure;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+#bank-managing {
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#banks-column-holder {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 2px;
+  background-color: rgba(240, 248, 255, 0.842);
+  display: block;
+  overflow: hidden;
+  padding: 60px;
+}
+
+#banks {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.bank {
+  height: 52px;
+  color: #4d5a66;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  margin: 4px;
+}
+
+#banks > .bank:hover {
+  background-color: rgb(230, 248, 248);
+}
+
+.bank > div {
+  padding: 10px;
+  text-align: center;
+  background-color: rgb(221, 248, 248);
+  width: 20%;
+  border: 1px solid rgb(197, 221, 221);
+  height: 100%;
+  overflow: hidden;
+}
+
+.bank > div > input {
+  width: 90%;
+}
+
+.bank > div.funcs-button-holder {
+  width: 50px;
+  flex-shrink: 1;
+  padding: 0px;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0);
+}
+
+img.funcs-button {
+  width: 50%;
+  margin-bottom: 5px;
+  margin-top: 2px;
+}
+
+img.funcs-button:hover {
+  background-color: rgb(197, 221, 221);
+  cursor: pointer;
+}
+
+#calculator-options {
+  margin-top: 20px;
+  display: flex;
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  flex-direction: column;
+  background-color: rgba(240, 248, 255, 0.842);
+  padding: 20px;
+}
+
+#calculator-options > div {
+  margin: 5px;
+  height: 20px;
+  padding: 20px;
+  background-color: rgb(221, 248, 248);
+}
+
+#calculator-options > div#calculate-button {
+  border-radius: 30px;
+  color: #2c3e50;
+  width: 10%;
+  box-sizing: border-box;
+  height: auto;
+  padding: 8px;
+  text-align: center;
+  background-color: #f7cd49;
+}
+
+div#calculated-mortgage {
+  display: none;
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  background-color:rgb(230, 248, 248);
+}
+
+div#warning {
+  display: none;
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #ff0033;
+  color: white;
+}
+
+.button {
+  background-color: #f7cd49;
+  height: auto;
+  width: 85px;
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
+  padding: 10px;
+  color: #2c3e50;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 30px;
+  transition: all 0.5s ease;
+}
+
+.button:hover, #calculator-options > div#calculate-button:hover {
+  color: rgb(230, 248, 248);
+  background-color: #86242a;
+}

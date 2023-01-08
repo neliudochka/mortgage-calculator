@@ -37,7 +37,6 @@ class Server {
     this.server = http.createServer();
     this.server.listen(port, () => console.log(`Server listening on port ${port}...`));
     this.server.on('request', (req, res) => this.handleRequest(req, res));
-    console.log("hei")
   }
 
   handleRequest(req, res) {
