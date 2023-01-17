@@ -45,18 +45,20 @@ class Server {
   }
 
   handleGetRequest(req, res) {
-    let name = req.url;
-    console.log(req.method, name);
-    if (routing[name]) name = routing[name];
-    if (this._dbRequests[name]) {
-      this._dbRequests[name](res);
+    const { url } = req;
+    console.log(req.method, url);
+
+    const path = routing[url] || url;
+    if (this._dbRequests[url]) {
+      this._dbRequests[url](res);
       return;
     }
-    const extention = name.split('.')[1];
+    const [, extention] = path.split('.');
     const typeAns = mime[extention];
-    fs.readFile('.' + name, (err, data) => {
-      if (err) console.error('in handle request ' + err);
-      else {
+    fs.readFile('.' + path, (err, data) => {
+      if (err) {
+        console.error('in handle request ' + err);
+      } else {
         res.writeHead(200, { 'Content-Type': `${typeAns}; charset=utf-8` });
         res.write(data);
       };
@@ -65,8 +67,8 @@ class Server {
   }
 
   handlePostRequest(req, res) {
-    let name = req.url;
-    console.log(req.method, name);
+    const { url } = req;
+    console.log(req.method, url);
     let data = '';
     req.on('error', (err) => console.error(err));
 
@@ -80,8 +82,8 @@ class Server {
       const con = await this.database.createConnection();
       con.connect(async (err) => {
         if (err) throw err;
-        if (name === '/newBank') result = (await this.database.putBankInDB(dataParsed)).toString();
-        else if(name === '/updateBankInfo') {
+        if (url === '/newBank') result = (await this.database.putBankInDB(dataParsed)).toString();
+        else if(url === '/updateBankInfo') {
           const ans = await this.database.updateBankInfo(dataParsed);
           const obj = this.getResponseObject(ans[0]);
           result = JSON.stringify(obj);
