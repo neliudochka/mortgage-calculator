@@ -26,11 +26,11 @@ class Server {
     '/allBanks': (res) => this.getAllBanks(res),
   };
 
-  reqMethods = {
-    GET: this.handleGetRequest,
-    POST: this.handlePostRequest,
-    DELETE: this.handleDeleteRequest,
- };
+  _reqMethods = {
+    GET: (req, res) => this.handleGetRequest(req, res),
+    POST: (req, res) => this.handlePostRequest(req, res),
+    DELETE: (req, res) => this.handleDeleteRequest(req, res),
+  }
 
   constructor(port, database) {
     this.database = database;
@@ -40,7 +40,7 @@ class Server {
   }
 
   handleRequest(req, res) {
-    const reqMethod = this.reqMethods[req.method];
+    const reqMethod = this._reqMethods[req.method];
     if (reqMethod) reqMethod(req, res);
   }
 
