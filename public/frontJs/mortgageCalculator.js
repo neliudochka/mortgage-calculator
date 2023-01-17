@@ -1,7 +1,5 @@
-import MortgageCalculatorClass from './mortgageCalculatorClass.js';
+import MortgageCalculatorClass from "./mortgageCalculatorClass.js";
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   new MortgageCalculatorClass();
 });
-
-

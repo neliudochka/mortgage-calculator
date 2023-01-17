@@ -1,12 +1,12 @@
-import Bank from './bank.js';
+import Bank from "./bank.js";
 
 export default class BanksStorage {
   _routes = {
-    'allBanks': () => this.onAllBanksLoaded(),
-    'newBank': () => this.onNewBankResponse(),
-    'updateBankInfo': () => this.onUpdateBankInfo(),
-    'deleteBankById': () =>this.onDeleteBankById(),
-  }
+    allBanks: () => this.onAllBanksLoaded(),
+    newBank: () => this.onNewBankResponse(),
+    updateBankInfo: () => this.onUpdateBankInfo(),
+    deleteBankById: () => this.onDeleteBankById(),
+  };
 
   constructor() {
     if (!BanksStorage._instance) {
@@ -23,9 +23,9 @@ export default class BanksStorage {
     if (newBank) bank = new Bank(newBank);
     else bank = new Bank();
     bank.addToBanksStorage(this);
-    const banks = document.getElementById('banks');
+    const banks = document.getElementById("banks");
     banks.appendChild(bank.bank);
-    if(!newBank) bank.editBank(true);
+    if (!newBank) bank.editBank(true);
     else {
       this.banks[bank.i] = bank;
       bank.addEditDeleteListeners();
@@ -34,38 +34,38 @@ export default class BanksStorage {
 
   addBank(bank) {
     const data = JSON.stringify(bank.info);
-    this.xhr.open('POST', '/newBank');
+    this.xhr.open("POST", "/newBank");
     this.awaitBank = bank;
     this.xhr.send(data);
   }
 
   getBanks() {
-    this.xhr.open('GET', '/allBanks');
-    this.xhr.responseType = 'json';
+    this.xhr.open("GET", "/allBanks");
+    this.xhr.responseType = "json";
     this.xhr.onload = () => this.xhrOnLoad();
     this.xhr.send();
   }
 
   deleteBank(bankNumber) {
     this.awaitDeleteBank = this.banks[bankNumber];
-    this.xhr.open('DELETE', '/deleteBankById');
+    this.xhr.open("DELETE", "/deleteBankById");
     this.xhr.send(bankNumber);
   }
 
   xhrOnLoad() {
-    const parts = this.xhr.responseURL.split('/');
+    const parts = this.xhr.responseURL.split("/");
     const xhrOnLoadFunc = this._routes[parts[parts.length - 1]];
     if (xhrOnLoadFunc) xhrOnLoadFunc();
   }
 
   onAllBanksLoaded() {
     const banks = Object.values(this.xhr.response);
-    if(this.mc) this.mc.drawOptions(banks);
+    if (this.mc) this.mc.drawOptions(banks);
     else {
       for (let bank of banks) {
         this.createBank(bank);
       }
-    } 
+    }
   }
 
   setMortgageClass(mc) {
@@ -80,14 +80,13 @@ export default class BanksStorage {
       this.awaitBank.save();
     } else this.awaitBank.RequestDeleteBank();
     this.awaitBank = null;
-    
   }
 
   updateBankInfo(bankNumber) {
     const info = this.banks[bankNumber].getUpdatedInfo();
     this.awaitUpdateBank = this.banks[bankNumber];
-    this.xhr.open('POST', '/updateBankInfo');
-    this.xhr.send(JSON.stringify({info, id: bankNumber}));
+    this.xhr.open("POST", "/updateBankInfo");
+    this.xhr.send(JSON.stringify({ info, id: bankNumber }));
   }
 
   onUpdateBankInfo() {
@@ -98,11 +97,10 @@ export default class BanksStorage {
 
   onDeleteBankById() {
     const res = this.xhr.response;
-    if (!res) return; 
+    if (!res) return;
     const bankNumber = this.awaitDeleteBank.i;
     this.awaitDeleteBank.deleteBank();
     delete this.banks[bankNumber];
     this.awaitDeleteBank = null;
   }
-
 }

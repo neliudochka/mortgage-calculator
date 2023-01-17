@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const mysql = require('mysql');
+const mysql = require("mysql");
 
 class Database {
   constructor(loginSettings) {
@@ -17,7 +17,7 @@ class Database {
   execQueryPromise(query) {
     return new Promise((resolve, reject) => {
       this.con.query(query, (err, script) => {
-        console.log("1 "+err+ " " + this.con.state)
+        console.log("1 " + err + " " + this.con.state);
         if (err) reject(err);
         else resolve(script);
       });
@@ -36,16 +36,15 @@ class Database {
     )
     `;
     await this.createConnection();
-    this.execQueryPromise(schema)
-    .catch(err => console.error(err));
+    this.execQueryPromise(schema).catch((err) => console.error(err));
   }
 
   async getAllBanks() {
     let data = null;
     const query = `SELECT * FROM cwDB.bank`;
     await this.execQueryPromise(query)
-    .catch(err => console.error(err))
-    .then(rows => data = rows);
+      .catch((err) => console.error(err))
+      .then((rows) => (data = rows));
     return data;
   }
 
@@ -54,17 +53,17 @@ class Database {
     const query = `INSERT INTO cwDB.bank(bank_name, bank_interestRate, bank_maximumLoan, bank_minimumDownPayment, bank_loanTerm)
                    VALUES('${bank.name}', '${bank.interestRate}', '${bank.maximumLoan}', '${bank.minimumDownPayment}', '${bank.loanTerm}')`;
     await this.execQueryPromise(query)
-    .catch(err => console.error(err))
-    .then(rows => id = rows.insertId);
+      .catch((err) => console.error(err))
+      .then((rows) => (id = rows.insertId));
     return id;
   }
 
   async deleteBankById(id) {
-    let success = false
+    let success = false;
     const query = `DELETE FROM cwDB.bank WHERE cwDB.bank.bank_id = ${id}`;
     await this.execQueryPromise(query)
-    .catch(err => console.error(err))
-    .then(rows => success = rows.affectedRows == 1 ? true: false);
+      .catch((err) => console.error(err))
+      .then((rows) => (success = rows.affectedRows == 1 ? true : false));
     return success;
   }
 
@@ -78,11 +77,10 @@ class Database {
                        cwDB.bank.bank_loanTerm = '${data.info.loanTerm}'
                    WHERE cwDB.bank.bank_id = ${data.id}`;
     const selectQuery = `SELECT * FROM cwDB.bank WHERE bank.bank_id = ${data.id}`;
-    await this.execQueryPromise(updateQuery)
-    .catch(err => console.error(err));
+    await this.execQueryPromise(updateQuery).catch((err) => console.error(err));
     await this.execQueryPromise(selectQuery)
-    .catch(err => console.error(err))
-    .then(rows => update = rows);
+      .catch((err) => console.error(err))
+      .then((rows) => (update = rows));
     return update;
   }
 }

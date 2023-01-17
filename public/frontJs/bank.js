@@ -1,7 +1,7 @@
 export default class Bank {
   constructor(bankInfo) {
-    this.bank = document.createElement('div');
-    this.bank.classList.add('bank');
+    this.bank = document.createElement("div");
+    this.bank.classList.add("bank");
     this.i = null;
     if (bankInfo) {
       this.i = bankInfo.id;
@@ -24,10 +24,10 @@ export default class Bank {
   setDefaultValues() {
     this.info = {};
     this.info.name = `Bank-Name`;
-    this.info.interestRate = '001';
-    this.info.maximumLoan = '100000';
-    this.info.minimumDownPayment = '100';
-    this.info.loanTerm = '356';
+    this.info.interestRate = "001";
+    this.info.maximumLoan = "100000";
+    this.info.minimumDownPayment = "100";
+    this.info.loanTerm = "356";
   }
 
   getBankInfo() {
@@ -35,8 +35,12 @@ export default class Bank {
   }
 
   addEditDeleteListeners() {
-    this.bank.children[5].children[0].addEventListener('click', () => this.editBank(false));
-    this.bank.children[5].children[1].addEventListener('click', () => this.requestDeleteBank());
+    this.bank.children[5].children[0].addEventListener("click", () =>
+      this.editBank(false)
+    );
+    this.bank.children[5].children[1].addEventListener("click", () =>
+      this.requestDeleteBank()
+    );
   }
 
   requestDeleteBank() {
@@ -58,15 +62,18 @@ export default class Bank {
     const bankChildren = bank.children;
     for (let i = 0; i < 5; i++) {
       const text = bankChildren[i].innerText;
-      let input = `<input type="text" value="${text}" maxlength="12">`
-      if (i === 1 || i === 3) input = `<input placeholder="###.##" type="number" min=0 max=100 value="${text}">`;
+      let input = `<input type="text" value="${text}" maxlength="12">`;
+      if (i === 1 || i === 3)
+        input = `<input placeholder="###.##" type="number" min=0 max=100 value="${text}">`;
       else if (i === 2) `<input type="number" min=0 value="${text}"/>`;
       bankChildren[i].innerHTML = input;
     }
     bankChildren[5].innerHTML = `<img title="Save" class="funcs-button" src="https://img.icons8.com/office/48/000000/checkmark--v1.png"/>
                                  <img title="Cancel changes" class="funcs-button" src="https://img.icons8.com/office/48/000000/delete-sign.png"/>`;
-    bankChildren[5].children[0].addEventListener('click', () => this.saveInfo());
-    bankChildren[5].children[1].addEventListener('click', () => {
+    bankChildren[5].children[0].addEventListener("click", () =>
+      this.saveInfo()
+    );
+    bankChildren[5].children[1].addEventListener("click", () => {
       if (!this.i) this.deleteBank();
       else {
         bank.innerHTML = bankBackup;
@@ -82,12 +89,12 @@ export default class Bank {
   }
 
   save(bankInfo = null) {
-    if(!bankInfo) this.getUpdatedInfo();
+    if (!bankInfo) this.getUpdatedInfo();
     const bank = this.bank;
     const bankChildren = bank.children;
     const infoKeys = Object.keys(this.info);
     for (let i = 0; i < 5; i++) {
-      bankChildren[i].style['background-color'] = 'rgb(221, 248, 248)';
+      bankChildren[i].style["background-color"] = "rgb(221, 248, 248)";
       let value = null;
       if (bankInfo) value = bankInfo[infoKeys[i]];
       else value = this.updatedInfo[infoKeys[i]];
@@ -119,10 +126,13 @@ export default class Bank {
     for (let i = 0; i < 5; i++) {
       const input = bankChildren[i].firstElementChild;
       const text = input.value;
-      const regex1 = new RegExp('[0-9]+');
-      if (((i == 1 || i == 3 ) && (!regex1.test(text) || +(text) < 0 || +(text) > 100))
-      || ((i == 2 || i == 4) && !regex1.test(text))) {
-        bankChildren[i].style['background-color'] = '#FFC0C7';
+      const regex1 = new RegExp("[0-9]+");
+      if (
+        ((i == 1 || i == 3) &&
+          (!regex1.test(text) || +text < 0 || +text > 100)) ||
+        ((i == 2 || i == 4) && !regex1.test(text))
+      ) {
+        bankChildren[i].style["background-color"] = "#FFC0C7";
         return false;
       }
     }
