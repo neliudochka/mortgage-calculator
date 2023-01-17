@@ -1,6 +1,3 @@
 {
-  "host": "localhost",
-  "user": "root",
-  "password": "SdfUsuf12!",
-  "database": "cwDB"
+  "uri": "mysql://root:SdfUsuf12!@localhost:3306/cwDB"
 }

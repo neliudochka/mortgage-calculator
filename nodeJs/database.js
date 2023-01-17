@@ -1,6 +1,7 @@
 "use strict";
 
-const mysql = require("mysql");
+const mysql = require("mysql2");
+const dbLoginSettings = require("../config/dbLoginSettings.config.json");
 
 class Database {
   constructor(loginSettings) {
@@ -10,6 +11,7 @@ class Database {
   }
 
   async createConnection() {
+    //Create connection once?
     this.con = await mysql.createConnection(this.loginSettings);
     return this.con;
   }
@@ -41,7 +43,7 @@ class Database {
 
   async getAllBanks() {
     let data = null;
-    const query = `SELECT * FROM cwDB.bank`;
+    const query = `SELECT * FROM bank`;
     await this.execQueryPromise(query)
       .catch((err) => console.error(err))
       .then((rows) => (data = rows));
@@ -50,7 +52,7 @@ class Database {
 
   async putBankInDB(bank) {
     let id = null;
-    const query = `INSERT INTO cwDB.bank(bank_name, bank_interestRate, bank_maximumLoan, bank_minimumDownPayment, bank_loanTerm)
+    const query = `INSERT INTO bank(bank_name, bank_interestRate, bank_maximumLoan, bank_minimumDownPayment, bank_loanTerm)
                    VALUES('${bank.name}', '${bank.interestRate}', '${bank.maximumLoan}', '${bank.minimumDownPayment}', '${bank.loanTerm}')`;
     await this.execQueryPromise(query)
       .catch((err) => console.error(err))
@@ -60,7 +62,7 @@ class Database {
 
   async deleteBankById(id) {
     let success = false;
-    const query = `DELETE FROM cwDB.bank WHERE cwDB.bank.bank_id = ${id}`;
+    const query = `DELETE FROM bank WHERE bank.bank_id = ${id}`;
     await this.execQueryPromise(query)
       .catch((err) => console.error(err))
       .then((rows) => (success = rows.affectedRows == 1 ? true : false));
@@ -69,14 +71,14 @@ class Database {
 
   async updateBankInfo(data) {
     let update = null;
-    const updateQuery = `UPDATE cwDB.bank
-                   SET cwDB.bank.bank_name = '${data.info.name}',
-                       cwDB.bank.bank_interestRate = '${data.info.interestRate}',
-                       cwDB.bank.bank_maximumLoan = '${data.info.maximumLoan}',
-                       cwDB.bank.bank_minimumDownPayment = '${data.info.minimumDownPayment}',
-                       cwDB.bank.bank_loanTerm = '${data.info.loanTerm}'
-                   WHERE cwDB.bank.bank_id = ${data.id}`;
-    const selectQuery = `SELECT * FROM cwDB.bank WHERE bank.bank_id = ${data.id}`;
+    const updateQuery = `UPDATE bank
+                   SET bank.bank_name = '${data.info.name}',
+                       bank.bank_interestRate = '${data.info.interestRate}',
+                       bank.bank_maximumLoan = '${data.info.maximumLoan}',
+                       bank.bank_minimumDownPayment = '${data.info.minimumDownPayment}',
+                       bank.bank_loanTerm = '${data.info.loanTerm}'
+                   WHERE bank.bank_id = ${data.id}`;
+    const selectQuery = `SELECT * FROM bank WHERE bank.bank_id = ${data.id}`;
     await this.execQueryPromise(updateQuery).catch((err) => console.error(err));
     await this.execQueryPromise(selectQuery)
       .catch((err) => console.error(err))
@@ -85,4 +87,6 @@ class Database {
   }
 }
 
-module.exports = { Database };
+const db = new Database(dbLoginSettings);
+
+module.exports = db;
