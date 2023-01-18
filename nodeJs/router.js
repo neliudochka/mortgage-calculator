@@ -40,7 +40,7 @@ const routes = {
 
 const handleRequest = (req, res) => {
   const { method, url } = req;
-  console.log(method, url, routes[method] && routes[method][url]);
+  console.log(method, url);
   if (routes[method] && routes[method][url]) {
     const controller = routes[method][url];
     controller(req, res);

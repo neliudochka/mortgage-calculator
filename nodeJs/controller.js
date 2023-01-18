@@ -18,7 +18,7 @@ const getAllBanks = async (req, res) => {
 };
 
 const createNewBank = async (req, res) => {
-  doSmthWithBank(req, res, (data) => db.putBankInDB(JSON.parse(data)))
+  doSmthWithBank(req, res, (data) => db.putBankInDB(JSON.parse(data)));
 };
 
 const updateBankInfo = async (req, res) => {
@@ -26,8 +26,8 @@ const updateBankInfo = async (req, res) => {
     const answ = await db.updateBankInfo(JSON.parse(data));
     const obj = getResponseObject(answ[0]);
     return JSON.stringify(obj);
-    });
-  };
+  });
+};
 
 const deleteBankById = async (req, res) => {
   doSmthWithBank(req, res, (data) => db.deleteBankById(data));
@@ -40,9 +40,6 @@ const doSmthWithBank = async (req, res, fun) => {
   req.on("data", (chunk) => {
     data += chunk;
   });
-
-
-  console.log("data" + data);
 
   req.on("end", async () => {
     let result = null;
@@ -58,7 +55,6 @@ const doSmthWithBank = async (req, res, fun) => {
   });
 };
 
-//const addBank = async ()
 const mime = {
   html: "text/html",
   js: "text/javascript",
@@ -93,14 +89,6 @@ const getResponseObject = (bank) => {
     minimumDownPayment: bank.bank_minimumDownPayment,
     loanTerm: bank.bank_loanTerm,
   };
-};
-
-const receiveArgs = async (req) => {
-  const buffers = [];
-  for await (const chunk of req) buffers.push(chunk);
-  const data = Buffer.concat(buffers).toString();
-  console.log("iside" + data);
-  return data;
 };
 
 module.exports = {
