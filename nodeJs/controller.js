@@ -1,5 +1,4 @@
 const fs = require("fs");
-const { getResponseObject } = require("./middleware");
 const db = require("./database");
 
 const getAllBanks = async (req, res) => {
@@ -8,12 +7,8 @@ const getAllBanks = async (req, res) => {
     if (err) throw err;
     const banks = await db.getAllBanks();
     const data = [];
-    let i = 0;
-    for (let bank of banks) {
-      //rename
-      const dataI = getResponseObject(bank);
-      data.push(dataI);
-      i++;
+    for (const bank of banks) {
+      data.push(getResponseObject(bank));
     }
     res.writeHead(200, { "Content-Type": `${mime["json"]}; charset=utf-8` });
     res.write(JSON.stringify(data));
@@ -23,33 +18,22 @@ const getAllBanks = async (req, res) => {
 };
 
 const createNewBank = async (req, res) => {
-  const { url } = req;
-  //console.log(req.method, url);
-  let data = "";
-  req.on("error", (err) => console.error(err));
-
-  req.on("data", (chunk) => {
-    data += chunk;
-  });
-
-  req.on("end", async () => {
-    const dataParsed = JSON.parse(data);
-    let result = null;
-    const con = await db.createConnection();
-    con.connect(async (err) => {
-      if (err) throw err;
-      result = (await db.putBankInDB(dataParsed)).toString();
-      res.writeHead(200, { "Content-Type": `${mime["txt"]}; charset=utf-8` });
-      res.write(result);
-      res.end();
-      con.destroy();
-    });
-  });
+  doSmthWithBank(req, res, (data) => db.putBankInDB(JSON.parse(data)))
 };
 
 const updateBankInfo = async (req, res) => {
-  const { url } = req;
-  console.log(req.method, url);
+  doSmthWithBank(req, res, async (data) => {
+    const answ = await db.updateBankInfo(JSON.parse(data));
+    const obj = getResponseObject(answ[0]);
+    return JSON.stringify(obj);
+    });
+  };
+
+const deleteBankById = async (req, res) => {
+  doSmthWithBank(req, res, (data) => db.deleteBankById(data));
+};
+
+const doSmthWithBank = async (req, res, fun) => {
   let data = "";
   req.on("error", (err) => console.error(err));
 
@@ -57,23 +41,24 @@ const updateBankInfo = async (req, res) => {
     data += chunk;
   });
 
+
+  console.log("data" + data);
+
   req.on("end", async () => {
-    const dataParsed = JSON.parse(data);
     let result = null;
     const con = await db.createConnection();
     con.connect(async (err) => {
       if (err) throw err;
-      const ans = await db.updateBankInfo(dataParsed);
-      const obj = db.getResponseObject(ans[0]);
-      result = JSON.stringify(obj);
-      res.writeHead(200, { "Content-Type": `${mime["txt"]}; charset=utf-8` });
-      res.write(result);
+      result = await fun(data);
+      res.writeHead(200, { "Content-Type": `${mime["json"]}; charset=utf-8` });
+      res.write(result.toString());
       res.end();
       con.destroy();
     });
   });
 };
 
+//const addBank = async ()
 const mime = {
   html: "text/html",
   js: "text/javascript",
@@ -99,25 +84,23 @@ const staticController = (path) => (req, res) => {
   });
 };
 
-const deleteBankById = async (req, res) => {
-  let data = "";
-  req.on("error", (err) => console.error(err));
+const getResponseObject = (bank) => {
+  return {
+    id: bank.bank_id,
+    name: bank.bank_name,
+    interestRate: bank.bank_interestRate,
+    maximumLoan: bank.bank_maximumLoan,
+    minimumDownPayment: bank.bank_minimumDownPayment,
+    loanTerm: bank.bank_loanTerm,
+  };
+};
 
-  req.on("data", (chunk) => {
-    data += chunk;
-  });
-
-  req.on("end", async () => {
-    const con = await db.createConnection();
-    con.connect(async (err) => {
-      if (err) throw err;
-      const success = await db.deleteBankById(data);
-      res.writeHead(200, { "Content-Type": `${mime["json"]}; charset=utf-8` });
-      res.write(success.toString());
-      res.end();
-      con.destroy();
-    });
-  });
+const receiveArgs = async (req) => {
+  const buffers = [];
+  for await (const chunk of req) buffers.push(chunk);
+  const data = Buffer.concat(buffers).toString();
+  console.log("iside" + data);
+  return data;
 };
 
 module.exports = {
