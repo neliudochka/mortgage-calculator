@@ -1,25 +1,25 @@
 "use strict";
 
 const mysql = require("mysql2");
-const dbLoginSettings = require("../config/dbLoginSettings.config.json");
+const { uri } = require("../config/dbLoginSettings.config.json");
 
 class Database {
-  constructor(loginSettings) {
-    this.loginSettings = loginSettings;
+  constructor(uri) {
+    this.uri = uri;
     this.con = null;
     this.checkSchema();
   }
 
   async createConnection() {
-    //Create connection once?
-    this.con = await mysql.createConnection(this.loginSettings);
+    this.con = await mysql.createConnection({
+      uri: this.uri,
+    });
     return this.con;
   }
 
-  execQueryPromise(query) {
+  execQueryPromise(query, values) {
     return new Promise((resolve, reject) => {
-      this.con.query(query, (err, script) => {
-        console.log("1 " + err + " " + this.con.state);
+      this.con.query(query, values, (err, script) => {
         if (err) reject(err);
         else resolve(script);
       });
@@ -53,8 +53,14 @@ class Database {
   async putBankInDB(bank) {
     let id = null;
     const query = `INSERT INTO bank(bank_name, bank_interestRate, bank_maximumLoan, bank_minimumDownPayment, bank_loanTerm)
-                   VALUES('${bank.name}', '${bank.interestRate}', '${bank.maximumLoan}', '${bank.minimumDownPayment}', '${bank.loanTerm}')`;
-    await this.execQueryPromise(query)
+                   VALUES(?, ?, ?, ?, ?)`;
+    await this.execQueryPromise(query, [
+      bank.name,
+      bank.interestRate,
+      bank.maximumLoan,
+      bank.minimumDownPayment,
+      bank.loanTerm,
+    ])
       .catch((err) => console.error(err))
       .then((rows) => (id = rows.insertId));
     return id;
@@ -62,8 +68,8 @@ class Database {
 
   async deleteBankById(id) {
     let success = false;
-    const query = `DELETE FROM bank WHERE bank.bank_id = ${id}`;
-    await this.execQueryPromise(query)
+    const query = `DELETE FROM bank WHERE bank.bank_id = ?`;
+    await this.execQueryPromise(query, [id])
       .catch((err) => console.error(err))
       .then((rows) => (success = rows.affectedRows == 1 ? true : false));
     return success;
@@ -71,22 +77,34 @@ class Database {
 
   async updateBankInfo(data) {
     let update = null;
-    const updateQuery = `UPDATE bank
-                   SET bank.bank_name = '${data.info.name}',
-                       bank.bank_interestRate = '${data.info.interestRate}',
-                       bank.bank_maximumLoan = '${data.info.maximumLoan}',
-                       bank.bank_minimumDownPayment = '${data.info.minimumDownPayment}',
-                       bank.bank_loanTerm = '${data.info.loanTerm}'
-                   WHERE bank.bank_id = ${data.id}`;
-    const selectQuery = `SELECT * FROM bank WHERE bank.bank_id = ${data.id}`;
-    await this.execQueryPromise(updateQuery).catch((err) => console.error(err));
-    await this.execQueryPromise(selectQuery)
+    const updateQuery =
+      "UPDATE bank " +
+      "SET bank.bank_name = ?, " +
+      "bank.bank_interestRate = ?, " +
+      "bank.bank_maximumLoan = ?, " +
+      "bank.bank_minimumDownPayment = ?, " +
+      "bank.bank_loanTerm = ? " +
+      "WHERE bank.bank_id = ?";
+    const selectQuery = `SELECT * FROM bank WHERE bank.bank_id = ?`;
+    await this.execQueryPromise(updateQuery, [
+      data.info.name,
+      data.info.interestRate,
+      data.info.maximumLoan,
+      data.info.minimumDownPayment,
+      data.info.loanTerm,
+      data.id,
+    ]).catch((err) => console.error(err));
+    await this.execQueryPromise(selectQuery, [data.id])
       .catch((err) => console.error(err))
-      .then((rows) => (update = rows));
+      .then((rows) => {
+        console.log(rows);
+        update = rows;
+      });
+
     return update;
   }
 }
 
-const db = new Database(dbLoginSettings);
+const db = new Database(uri);
 
 module.exports = db;
